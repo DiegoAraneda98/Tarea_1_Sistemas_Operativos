@@ -10,7 +10,7 @@
 
 ## Instalación 
 
-* Necesitaremos instalar la libreria de ncurses.h
+* Necesitaremos instalar la libreria de ncurses.h con el siguinte comando en la terminal.
 ```
 sudo apte install libncurses5-dev libncursesw5-dev
 ```
