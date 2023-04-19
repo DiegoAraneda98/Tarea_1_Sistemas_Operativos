@@ -31,11 +31,11 @@ gcc -o hipodromo hipodromo.c -lncurses
 
 ## Definición de variables y funciones.
 ## Funciones
-* ***imprimir_tablero***,
-* ***carrera***,
+* ***imprimir_tablero***
+* ***carrera***
 ## Variables
-* ***num_caballos***,
-* ***largo_pista***,
+* ***num_caballos***
+* ***largo_pista***
 ## Autores
 * Diego Araneda  - daranedah@ing.ucsc.cl
 * Hector Contreras - hcontreras@ing.ucsc.cl
