@@ -4,13 +4,11 @@
 #include <unistd.h>
 #include <ncurses.h>
 
-// Función para dibujar la pista de carrera
-void dibujarPista(int hipodromo[], int numCaballos, char *nombresCaballos[]) {
+void dibujarPista(int hipodromo[], int numCaballos, char* nombresCaballos[]) {
     int i, j;
     clear();
-    // Imprime la lista de caballos con su nombre y su posición en la pista
     for (i = 0; i < numCaballos; i++) {
-        movimiento(i+2, 0);
+        move(i+3, 0);
         printw("%s: ", nombresCaballos[i]);
         for (j = 1; j < hipodromo[i]; j++) {
             printw("-");
@@ -19,24 +17,27 @@ void dibujarPista(int hipodromo[], int numCaballos, char *nombresCaballos[]) {
     refresh();
 }
 
-// Función que simula la carrera de caballos
-void Carrera(int hipodromo[], int numCaballos, int largoPista, char *nombresCaballos[]) {
+void Carrera(int hipodromo[], int numCaballos, int largoPista, char* nombresCaballos[]) {
     int a, i, j;
-    // Inicializa el generador de números aleatorios
     srand(time(NULL));
-    // El bucle se ejecuta hasta que un caballo llega a la meta
     while (1) {
-        usleep(50000); // Pequeña pausa para hacer la carrera más realista
-        a = rand() % numCaballos; // Selecciona un caballo al azar para avanzar
-        hipodromo[a]++; // Avanza al caballo seleccionado
-        dibujarPista(hipodromo, numCaballos, nombresCaballos); // Dibuja la pista de carrera actualizada
-        if (hipodromo[a] == largoPista) { // Si el caballo seleccionado llega a la meta
-            // Muestra al caballo ganador en la última posición de la pantalla
-            movimiento(numCaballos+3, 0);
-            printw("\nCaballo ganador: %s\n", nombresCaballos[a]);
+        usleep(50000);
+        a = rand() % numCaballos;
+        hipodromo[a]++;
+        dibujarPista(hipodromo, numCaballos, nombresCaballos);
+        if (hipodromo[a] == largoPista) {
+        		clear();
+            printw("\n\nEl ganador es: %s!\n", nombresCaballos[a]);
             refresh();
-            break; // Sale del bucle
+            break;
         }
+        move(numCaballos+3, 0);
+        for (i = 0; i < numCaballos; i++) {
+            for (j = 0; j <= hipodromo[i]; j++) {
+            }
+            printw("  ");
+        }
+        refresh();
     }
 }
 
@@ -45,33 +46,49 @@ int main() {
     int numCaballos = 4;
     char *nombresCaballos[] = {"Estrella Nautica", "Princesa Alba", "Cristobal Colon", "El Pepe"};
     int hipodromo[numCaballos];
-    int i, opcion;
-
-    // Inicia el modo ncurses
+    int opcion, i;
+    
+    // INICIA EL MODO NCURSES.
     initscr();
     cbreak();
     noecho();
     clear();
-
-    // Inicializa el arreglo de posiciones de los caballos en la pista
+    
+    
+    
+    // SE GENERA EL MENÚ PARA APOSTAR RESPECTO A UN CABALLO.
+      for (i = 0; i < numCaballos; i++) {
+          hipodromo[i] = 0;
+      }
+    printw("----------------------------\n");
+    printw("|   APUESTA DE CABALLOS    |\n");
+    printw("----------------------------\n");
+    move(2, 0);
+    hline('-', 50);
+    move(3, 0);
     for (i = 0; i < numCaballos; i++) {
-        hipodromo[i] = 0;
+        printw("    %d. %s\n", i+1, nombresCaballos[i]);
     }
-
-    // Muestra el título de la carrera y el menú para seleccionar un caballo
-    movimiento(0, 0);
-    printw("Carrera de caballos");
-    movimiento(1, 0);
-    printw("-------------------");
-    movimiento(2, 0);
-    printw("Seleccione un caballo:");
-    movimiento(3, 0);
-    printw("----------------------");
-    for (i = 0; i < numCaballos; i++) {
-        movimiento(i+4, 0);
-        printw("%d. %s", i+1, nombresCaballos[i]);
+    printw("    %d. Ninguno\n", numCaballos+1);
+    move(numCaballos+4, 0);
+    hline('-', 50);
+    refresh();
+    do { // INDICA QUE CABALLO 
+        move(numCaballos+5, 0);
+        printw("Indique por quien apuesta (1-%d): ", numCaballos+1);
+        scanw("%d", &opcion);
+    } while (opcion < 1 || opcion > numCaballos+1);
+    if (opcion == numCaballos+1) {
+        clear();
+        dibujarPista(hipodromo, numCaballos, nombresCaballos);
+        Carrera(hipodromo, numCaballos, largoPista, nombresCaballos);        
+        printw("No ha apostado por ninguno.\n");
+    }else {
+        clear();
+        dibujarPista(hipodromo, numCaballos, nombresCaballos);
+        Carrera(hipodromo, numCaballos, largoPista, nombresCaballos);
     }
-    movimiento(numCaballos+4, 0);
-    printw("5. Ninguno");
+    getch();
+    endwin();
     return 0;
 }
